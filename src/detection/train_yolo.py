@@ -6,17 +6,25 @@ from ultralytics import YOLO
 
 def main():
     # 1️⃣ Trening
+    from ultralytics import YOLO
+
     model = YOLO("yolov8n.pt")
+
+    # Start training
     model.train(
-        data='data.yml',
+        data="data.yaml",
         epochs=100,
         imgsz=512,
         batch=16,
-        device='cpu'
+        device=0,
+        augment=True,
+        degrees=5,
+        translate=0.05,
+        scale=0.1
     )
 
     # 2️⃣ Evaluacija
-    model = YOLO("runs/detect/train/weights/best.pt") # učitavanje najboljeg modela
+    model = YOLO("models/best.pt") # učitavanje najboljeg modela
     results = model.val()
     print("Evaluation results:", results)
 

@@ -1,13 +1,12 @@
 # 2️⃣ Evaluacija
 import cv2
-from ultralytics.models import YOLO
+from ultralytics import YOLO
 
-model = YOLO("runs/detect/train/weights/best.pt")  # učitavanje najboljeg modela
-results = model.val()
-print("Evaluation results:", results)
+model = YOLO("models/best.pt")  # učitavanje najboljeg modela
+
 
 # 3️⃣ Inferencija / detekcija na novoj slici
-img = cv2.imread("input_images/test.jpg")
+img = cv2.imread("input_images/9.jpg")
 
 results = model.predict(
     source=img,  # zameni sa svojom slikom
