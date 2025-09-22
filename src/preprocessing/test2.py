@@ -1,13 +1,13 @@
 import shutil
-
-import cv2
 from PIL import Image
+import cv2
+import numpy as np
 
 from config import OUTPUT_DIR, TRAIN_FILE, VAL_FILE, TEST_FILE, ANNOT_FILE, IMAGES_DIR
 from utils import load_list, voc_to_yolo, build_image_map
 
 def main():
-    # 1. load lsits
+    # 1. load lists
     splits = {
         "train": load_list(TRAIN_FILE),
         "val":   load_list(VAL_FILE),
@@ -32,14 +32,15 @@ def main():
         (OUTPUT_DIR / f"images/{s}").mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / f"labels/{s}").mkdir(parents=True, exist_ok=True)
 
-    # 5. create labels
+    # 5. create labels + vizuelna provera
     for split, name_set in splits.items():
         print(f"📝Split: {split}, images counter: {len(name_set)}")
         for fname in name_set:
             src_img = image_map[fname]
 
-            img = Image.open(src_img)
-            w, h = img.size
+            img_pil = Image.open(src_img)
+            w, h = img_pil.size
+            img_np = np.array(img_pil)
 
             shutil.copy(src_img, OUTPUT_DIR / f"images/{split}/{fname}")
 
@@ -52,36 +53,22 @@ def main():
                     x_c, y_c, w_n, h_n = voc_to_yolo(xmin, ymin, xmax, ymax, w, h)
                     out.write(f"0 {x_c:.6f} {y_c:.6f} {w_n:.6f} {h_n:.6f}\n")
 
-            img = cv2.imread(str(src_img))  # cv2 koristi BGR
-            bboxes = annots.get(fname, [])
+                    # Vizuelizacija bbox-a na slici
+                    x1 = int((x_c - w_n/2) * w)
+                    y1 = int((y_c - h_n/2) * h)
+                    x2 = int((x_c + w_n/2) * w)
+                    y2 = int((y_c + h_n/2) * h)
+                    cv2.rectangle(img_np, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.putText(img_np, "food", (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 1)
 
-            # Iscrtavanje svih bounding boxova
-            for xmin, ymin, xmax, ymax, cls in bboxes:
-                cv2.rectangle(
-                    img,
-                    (int(xmin), int(ymin)),
-                    (int(xmax), int(ymax)),
-                    color=(0, 0, 255),  # crvena
-                    thickness=2
-                )
-                cv2.putText(
-                    img,
-                    str(0),  # ili cls ako želiš pravu klasu
-                    (int(xmin), int(ymin) - 5),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (0, 255, 0),
-                    1,
-                    cv2.LINE_AA
-                )
-
-            # Prikaz slike
-            cv2.imshow(f"{split} / {fname}", img)
-            cv2.waitKey(0)  # čekaj na taster
+            # Prikaz slike sa box-evima
+            cv2.imshow(f"{split}: {fname}", cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR))
+            key = cv2.waitKey(0)
             cv2.destroyAllWindows()
+            if key == ord('q'):
+                return
 
     print(f"📊 Number of images with multi bounding boxes: {multi_bbox_count}")
 
 if __name__ == "__main__":
     main()
-
