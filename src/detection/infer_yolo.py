@@ -2,11 +2,11 @@
 import cv2
 from ultralytics import YOLO
 
-model = YOLO("models/yolo/v1/best.pt")
+model = YOLO("models/yolo/v2/best.pt")
 
 
 # 3️⃣ Inferencija / detekcija na novoj slici
-img = cv2.imread("input_images/9.jpg")
+img = cv2.imread("input_images/1.jpg")
 
 results = model.predict(
     source=img,
