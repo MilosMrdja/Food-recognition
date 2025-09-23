@@ -3,6 +3,7 @@ venv/
 env/
 
 data/
+models/
 
 # Python cache files
 __pycache__/

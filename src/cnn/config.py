@@ -21,3 +21,5 @@ ROOT_CNN_DATASET= Path("data/cnn_dataset")
 TRAIN_CNN = ROOT_CNN_DATASET / "train"
 TEST_CNN = ROOT_CNN_DATASET / "test"
 VALID_CNN = ROOT_CNN_DATASET / "valid"
+
+MODELS_DIR = Path("models/cnn")
