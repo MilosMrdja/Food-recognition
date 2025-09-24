@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 
 from config import OUTPUT_DIR, SPLITS
 
+# View bounding boxes on the images
 for split in SPLITS:
     images_dir = OUTPUT_DIR / "images" / split
     labels_dir = OUTPUT_DIR / "labels" / split

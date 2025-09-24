@@ -1,4 +1,4 @@
-from cnn_class import Net
+from src.cnn.archive.cnn_class import Net
 import torch
 from config import MODELS_DIR
 from torchvision import datasets, transforms

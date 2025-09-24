@@ -30,8 +30,9 @@ class Net(nn.Module):
 def get_loss():
     return nn.CrossEntropyLoss()
 
-def get_optimizer(model, lr=0.001, momentum=0.9):
-    return optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+def get_optimizer(model, lr=1e-3, momentum=0.9):
+    return torch.optim.Adam(model.parameters(), lr=lr)
+
 
 # if __name__ == "__main__":
 #     net = Net(num_classes=36)

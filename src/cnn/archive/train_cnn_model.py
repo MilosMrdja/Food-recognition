@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from config import TRAIN_CNN, VALID_CNN, MODELS_DIR
-from cnn_class import Net, get_loss, get_optimizer
+from src.cnn.archive.cnn_class import Net, get_loss, get_optimizer
 
 classes = (
     "AW cola",
@@ -54,58 +54,67 @@ def imshow(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
 
-def main(net: Net, criterion, optimizer, num_epochs=2, batch_size=16):
+def main(net, criterion, optimizer, num_epochs=10, batch_size=32):
+    device = torch.device("cuda" if torch.cuda.is_available()
+                          else "mps" if torch.backends.mps.is_available()
+                          else "cpu")
+    net.to(device)
+
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5))
     ])
 
-    trainset = datasets.ImageFolder(TRAIN_CNN, transform=transform)
-    trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
-
-    validset = datasets.ImageFolder(VALID_CNN, transform=transform)
-    validloader = DataLoader(validset, batch_size=batch_size, shuffle=False, num_workers=2)
+    trainloader = DataLoader(
+        datasets.ImageFolder(TRAIN_CNN, transform=transform),
+        batch_size=batch_size, shuffle=True, num_workers=2
+    )
+    validloader = DataLoader(
+        datasets.ImageFolder(VALID_CNN, transform=transform),
+        batch_size=batch_size, shuffle=False, num_workers=2
+    )
 
     best_acc = 0.0
-
     for epoch in range(num_epochs):
+        # ---- Train ----
         net.train()
         running_loss = 0.0
-        for i, data in enumerate(trainloader, 0):
-            inputs, labels = data
-
+        for inputs, labels in trainloader:
+            inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = net(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-
             running_loss += loss.item()
-            if i % 200 == 199:
-                print(f"[Epoch {epoch+1}, Batch {i+1}] Loss: {running_loss/200:.3f}")
-                running_loss = 0.0
+        train_loss = running_loss / len(trainloader)
 
+        # ---- Validation ----
         net.eval()
-        correct = 0
-        total = 0
-
+        correct, total, val_loss = 0, 0, 0.0
         with torch.no_grad():
             for images, labels in validloader:
+                images, labels = images.to(device), labels.to(device)
                 outputs = net(images)
+                val_loss += criterion(outputs, labels).item()
                 _, predicted = torch.max(outputs, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-
+        val_loss /= len(validloader)
         val_acc = 100 * correct / total
-        print(f"Epoch {epoch + 1} finished. Test Accuracy: {val_acc:.2f}%")
+
+        print(f"Epoch {epoch+1}/{num_epochs} "
+              f"Train Loss: {train_loss:.4f} "
+              f"Val Loss: {val_loss:.4f} "
+              f"Val Acc: {val_acc:.2f}%")
 
         if val_acc > best_acc:
             best_acc = val_acc
             os.makedirs(MODELS_DIR, exist_ok=True)
-            torch.save(net.state_dict(), f"{MODELS_DIR}/cnn_model.pth")
-            print(f"✅ Best model saved with Acc: {best_acc:.2f}%")
+            model_path = f"{MODELS_DIR}/cnn_ep{epoch+1}_acc{val_acc:.2f}.pth"
+            torch.save(net.state_dict(), model_path)
+            print(f"✅ Best model saved: {model_path}")
 
-    print("Finished Training")
 
 if __name__ == '__main__':
     net = Net(num_classes=36)
