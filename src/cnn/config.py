@@ -1,5 +1,8 @@
 from pathlib import Path
 
+DATA_SET = Path("data/cnn/vfn_1_0")
+IMAGES_DIR = DATA_SET / "images"
+META_DIR = DATA_SET / "Meta"
 
 #------ FINAL for vfn dataset--------
 ROOT_CNN2_DATASET= Path("data/cnn/split_dataset")

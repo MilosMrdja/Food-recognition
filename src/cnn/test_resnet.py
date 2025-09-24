@@ -22,7 +22,7 @@ def load_data():
 def load_model(num_classes=82):
     model = models.resnet18(pretrained=False)
     model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
-    model.load_state_dict(torch.load(f"{MODELS_DIR}/final/best_model_cnn2.pth", map_location=DEVICE))
+    model.load_state_dict(torch.load(f"{MODELS_DIR}/vfn/final/best_model_cnn2.pth", map_location=DEVICE))
     model = model.to(DEVICE)
     model.eval()
     return model

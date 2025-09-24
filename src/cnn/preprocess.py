@@ -1,11 +1,8 @@
-import os
+
 import shutil
 from pathlib import Path
 
-DATASET_DIR = Path("data/vfn_1_0")
-IMAGES_DIR = DATASET_DIR / "Images"
-META_DIR = DATASET_DIR / "Meta"
-OUTPUT_DIR = Path("data/split_dataset")
+from config import IMAGES_DIR, META_DIR, ROOT_CNN2_DATASET
 
 splits = ["training", "validation", "testing"]
 
@@ -17,7 +14,7 @@ def create_split_folders():
 
     for split in splits:
         for class_id in range(82):
-            (OUTPUT_DIR / split / str(class_id)).mkdir(parents=True, exist_ok=True)
+            (ROOT_CNN2_DATASET / split / str(class_id)).mkdir(parents=True, exist_ok=True)
 
 def build_filename_to_class():
 
@@ -36,11 +33,11 @@ def copy_images(file_list, split, name_to_class):
             continue
         cls = name_to_class[fname]
         src = IMAGES_DIR / cls / fname
-        dst = OUTPUT_DIR / split / cls / fname
+        dst = ROOT_CNN2_DATASET / split / cls / fname
         shutil.copy2(src, dst)
 
 def main():
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    ROOT_CNN2_DATASET.mkdir(exist_ok=True)
     create_split_folders()
 
     name_to_class = build_filename_to_class()
@@ -51,7 +48,7 @@ def main():
         print(f"Processing {split}: {len(files)} images")
         copy_images(files, split, name_to_class)
 
-    print("Done! Saved to:", OUTPUT_DIR)
+    print("Done! Saved to:", ROOT_CNN2_DATASET)
 
 if __name__ == "__main__":
     main()
