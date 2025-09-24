@@ -1,9 +1,9 @@
 from pathlib import Path
 
-ROOT = Path("data/archive/Food-Image-Segmentation-using-YOLOv5-1/Food-Image-Segmentation-using-YOLOv5-1")
+ROOT = Path("data/yolo/archive/Food-Image-Segmentation-using-YOLOv5-1/Food-Image-Segmentation-using-YOLOv5-1")
 
 
-OUTPUT_DIR = Path("data/processedV2")
+OUTPUT_DIR = Path("data/yolo/processedV2")
 
 DIR_LABELS = OUTPUT_DIR / "labels"
 

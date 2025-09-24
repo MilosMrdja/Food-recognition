@@ -1,4 +1,4 @@
-path: data/processedV2
+path: data/yolo/processedV2
 train: images/train
 val: images/valid
 test: images/test

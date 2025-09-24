@@ -2,7 +2,9 @@
 import cv2
 from ultralytics import YOLO
 
-model = YOLO("models/yolo/v1/best.pt")
+from config import YOLO_MODEL_V2
+
+model = YOLO(YOLO_MODEL_V2)
 
 img = cv2.imread("input_images/1.jpg")
 
