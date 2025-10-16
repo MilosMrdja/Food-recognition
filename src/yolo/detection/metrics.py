@@ -1,9 +1,9 @@
 from ultralytics import YOLO
 import matplotlib.pyplot as plt
-from config import YOLO_MODEL_V1
+from config import YOLO_MODEL_V2
 
-model = YOLO(YOLO_MODEL_V1)
-metrics = model.val(data="data.yml")
+model = YOLO(YOLO_MODEL_V2)
+metrics = model.val(data="data.yml", split="test")
 
 results = metrics.results_dict
 

@@ -49,6 +49,7 @@ model = model.to(DEVICE)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
+# sgd optimizer
 
 # ----- Training loop -----
 best_acc = 0.0

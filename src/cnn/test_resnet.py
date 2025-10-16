@@ -3,9 +3,11 @@ from PIL import Image
 from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from config import MODELS_DIR, TEST_CNN2
+import matplotlib.pyplot as plt
+
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(DEVICE)
+
 
 transform = transforms.Compose([
     transforms.Resize(256),
@@ -40,6 +42,16 @@ def evaluate(model, data_loader):
             correct += (predicted == labels).sum().item()
     val_acc = 100 * correct / total
     print(f"Test Accuracy: {val_acc:.2f}%")
+    plot_accuracy(val_acc)
+
+def plot_accuracy(acc):
+    plt.figure(figsize=(6,4))
+    plt.bar(["Test Accuracy"], [acc], color='skyblue')
+    plt.ylim(0, 100)
+    plt.ylabel("Accuracy (%)")
+    plt.title("Model Test Accuracy")
+    plt.show()
+
 
 
 def predict_image(image_path, model, transform, device=DEVICE):

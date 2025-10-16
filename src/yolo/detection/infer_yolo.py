@@ -6,7 +6,7 @@ from config import YOLO_MODEL_V2
 
 model = YOLO(YOLO_MODEL_V2)
 
-img = cv2.imread("input_images/1.jpg")
+img = cv2.imread("input_images/3.jpg")
 
 results = model.predict(
     source=img,
