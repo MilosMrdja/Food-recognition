@@ -1,2 +1,2 @@
 # Food-recognition
-System that automatically calculates carbs, proteins and fat by uploading a single picture of your meal.
+System that automatically recognize food by provided a photo
